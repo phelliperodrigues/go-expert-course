@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Cursos</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Nome</th>
+        <th>Horas</th>
+    </tr>
+    </thead>
+    <tbody>
+        {{ range . }}
+        <tr>
+            <td> {{.Nome}}</td>
+            <td> {{.CargaHoraria}}</td>
+        </tr>
+        {{ end }}
+    </tbody>
+</table>
+
+</body>
+</html>
