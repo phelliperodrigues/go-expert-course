@@ -44,9 +44,23 @@ func main() {
 	//fmt.Println(product)
 
 	//select all
-	var products []Product
-	db.Find(&products)
+	//var products []Product
+	//db.
+	//	Limit(2). //limita quantidade
+	//	Offset(2). // pagina
+	//	Find(&products)
+	//
+	//for _, p := range products {
+	//	fmt.Println(p)
+	//}
 
+	var products []Product
+	db.Where("price > ?", 1000).Find(&products)
+	for _, p := range products {
+		fmt.Println(p)
+	}
+
+	db.Where("name LIKE ?", "%book%").Find(&products)
 	for _, p := range products {
 		fmt.Println(p)
 	}
