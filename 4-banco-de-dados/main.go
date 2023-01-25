@@ -88,6 +88,21 @@ func selectProducts(db *sql.DB) ([]Product, error) {
 	return products, err
 }
 
+func deleteProduct(db *sql.DB, id string) error {
+	stmt, err := db.Prepare("delete from products where id = ?")
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func main() {
 	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/goexpert")
 	if err != nil {
@@ -95,7 +110,9 @@ func main() {
 	}
 
 	defer db.Close()
-
+	fmt.Println("============================================================")
+	fmt.Println("INSERINDO NOVO PRODUTO")
+	fmt.Println("============================================================")
 	product := NewProduct("Notebook", 1899.0)
 	err = insertProduct(db, product)
 
@@ -103,24 +120,74 @@ func main() {
 		panic(err)
 	}
 
+	fmt.Println("============================================================")
+	fmt.Println("PRODUTO INSERIDO COM SUCESSO | ID:", product.ID)
+	fmt.Println("============================================================")
+
 	product.Name = "Tablet"
 	product.Price = 1000.0
 
+	fmt.Println("============================================================")
+	fmt.Println("ATUALIZANDO PRODUTO")
+	fmt.Println("============================================================")
 	err = updateProduct(db, product)
 	if err != nil {
 		panic(err)
 	}
 
+	fmt.Println("============================================================")
+	fmt.Println("PRODUTO ATUALIZADO COM SUCESSO")
+	fmt.Println("============================================================")
+
+	fmt.Println("============================================================")
+	fmt.Println("SELECIONANDO PRODUTO", product.ID)
+	fmt.Println("============================================================")
 	p, err := selectProduct(db, product.ID)
 	if err != nil {
 		panic(err)
 	}
-
+	fmt.Println("============================================================")
+	fmt.Println("PRODUTO SELECIONANDO COM SUCESSO")
 	fmt.Printf("%#v\n", p)
+	fmt.Println("============================================================")
 
+	fmt.Println("============================================================")
+	fmt.Println("SELECIONANDO TODOS PRODUTOS")
+	fmt.Println("============================================================")
 	products, err := selectProducts(db)
 
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("============================================================")
+	fmt.Println("PRODUTO SELECIONANDO COM SUCESSO")
 	for _, p := range products {
 		fmt.Printf("%#v\n", p)
 	}
+	fmt.Println("============================================================")
+
+	fmt.Println("============================================================")
+	fmt.Println("DELETANDO PRODUTO", product.ID)
+	fmt.Println("============================================================")
+	err = deleteProduct(db, product.ID)
+
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("============================================================")
+	fmt.Println("PRODUTO DELETADO COM SUCESSO")
+	fmt.Println("============================================================")
+
+	fmt.Println("============================================================")
+	fmt.Println("VERIFICANDO PRODUTO DELETADO")
+	fmt.Println("============================================================")
+	p, err = selectProduct(db, product.ID)
+	if err != nil {
+		fmt.Println("============================================================")
+		fmt.Println("PRODUTO NÃO EXISTE")
+		fmt.Println("============================================================")
+
+		panic(err)
+	}
+
 }
