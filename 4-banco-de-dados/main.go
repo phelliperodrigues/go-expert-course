@@ -34,6 +34,21 @@ func insertProduct(db *sql.DB, product *Product) error {
 	return err
 }
 
+func updateProduct(db *sql.DB, product *Product) error {
+	stmt, err := db.Prepare("update products set name = ? , price = ? where id = ?")
+	if err != nil {
+		panic(err)
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.Exec(product.Name, product.Price, product.ID)
+	if err != nil {
+		panic(err)
+	}
+	return err
+}
+
 func main() {
 	db, err := sql.Open("mysql", "root:root@tcp(localhost:3306)/goexpert")
 	if err != nil {
@@ -45,6 +60,14 @@ func main() {
 	product := NewProduct("Notebook", 1899.0)
 	err = insertProduct(db, product)
 
+	if err != nil {
+		panic(err)
+	}
+
+	product.Name = "Tablet"
+	product.Price = 1000.0
+
+	err = updateProduct(db, product)
 	if err != nil {
 		panic(err)
 	}
